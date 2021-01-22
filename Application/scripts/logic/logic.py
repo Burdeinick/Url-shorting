@@ -15,9 +15,9 @@ class EnterForm(FlaskForm):
 
 
 class HandlerLink:
-    """The class for work whith links."""
+    """The class for work with links."""
     def check_input_link(self, *_, **kwargs) -> bool:
-        """This method can to check a link on match whith pattern."""
+        """This method can to check a link on match with pattern."""
         link_from_form = kwargs.get('link_from_form')
         if re.match(URL_REG, link_from_form):
             return True

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Укорачиватель ссылок</title>
+</head>
+<body>
+<h2>На данной странице вы можете ввести ссылку, которую желаете укоротить.</h2>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    {{ form.link.label }} {{ form.link() }}
+    {{ form.submit() }}
+</form>
+</body>
+</html>

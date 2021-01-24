@@ -6,6 +6,11 @@ from wtforms import StringField, SubmitField
 from config import URL_REG
 import string
 import random
+from logger.log import MyLogging
+
+
+super_logger = MyLogging().setup_logger('logic',
+                                        'Application/logger/logfile.log')
 
 
 class EnterForm(FlaskForm):
@@ -28,14 +33,14 @@ class HandlerLink:
         link_from_form = kwargs.get('link_from_form')
         new_link = link_from_form.split('/')
 
-        short_link = "".join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for x in
+        short_link = "".join(random.choice(string.ascii_lowercase + string.digits) for x in
                              range(random.randrange(5, 8)))
         if new_link:
-            dns = link_from_form.split('/')[2] + '_'
-            short_link = dns + short_link
+            try:
+                dns = link_from_form.split('/')[2] + '_'
+                short_link = dns + short_link
+
+            except IndexError as e:
+                super_logger.error(f'Error {str(e)} in generate_short_link(file - logic.py)', exc_info=True)
 
         return short_link
-
-
-
-

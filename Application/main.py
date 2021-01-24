@@ -5,6 +5,11 @@ from scripts.logic.logic import EnterForm, HandlerLink
 from scripts.logic.FDataBase import FDataBase
 from flask import Flask, request, render_template, g, redirect
 from config import DATABASE, SECRET_KEY
+from logger.log import MyLogging
+
+
+super_logger = MyLogging().setup_logger('logic',
+                                        'Application/logger/logfile.log')
 
 
 app = Flask(__name__)
@@ -32,11 +37,17 @@ def close_db(error):
         g.link_db.close()
 
 
+dbase = None
+@app.before_request
+def before_request():
+    global dbase
+    db = get_db()
+    dbase = FDataBase(db)
+
+
 @app.route("/", methods=['POST', 'GET'])
 def index():
     """The function for work with start page."""
-    db = get_db()
-    dbase = FDataBase(db)
     input_link = EnterForm()
 
     if input_link.validate_on_submit():
@@ -59,8 +70,6 @@ def index():
 def short_link_redirect(short_link):
     """The function for redirect a link to origin url."""
     try:
-        db = get_db()
-        dbase = FDataBase(db)
         origin_link = dbase.get_long_link(short_link=short_link)
         if origin_link:
             return redirect(origin_link)
@@ -68,7 +77,7 @@ def short_link_redirect(short_link):
             return render_template('bad_link.html')
 
     except Exception as e:
-        print(f"Error - {str(e)} in the method short_link_redirect(file - main.py)")
+        super_logger.error(f'Error {str(e)} in short_link_redirect(file - main.py)', exc_info=True)
         return render_template('bad_link.html')
 
 

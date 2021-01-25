@@ -15,12 +15,14 @@ super_logger = MyLogging().setup_logger('logic',
 
 class EnterForm(FlaskForm):
     """The Form for enter a link."""
+
     link = StringField("Вставьте или введите ссылку", validators=[DataRequired()])
     submit = SubmitField('ОК')
 
 
 class HandlerLink:
     """The class for work with links."""
+
     def check_input_link(self, *_, **kwargs) -> bool:
         """This method can to check a link on match with pattern."""
         link_from_form = kwargs.get('link_from_form')
@@ -35,12 +37,16 @@ class HandlerLink:
 
         short_link = "".join(random.choice(string.ascii_lowercase + string.digits) for x in
                              range(random.randrange(5, 8)))
-        if new_link:
-            try:
-                dns = link_from_form.split('/')[2] + '_'
-                short_link = dns + short_link
 
-            except IndexError as e:
+        try:
+            if new_link:
+                dns = link_from_form.split('/')[2] + '_'
+                short_link = 'new_line/' + dns + short_link
+
+            else:
+                short_link = 'new_line/' + short_link
+
+        except IndexError as e:
                 super_logger.error(f'Error {str(e)} in generate_short_link(file - logic.py)', exc_info=True)
 
         return short_link

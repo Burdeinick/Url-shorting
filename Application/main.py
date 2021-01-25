@@ -73,6 +73,7 @@ def short_link_redirect(short_link):
         origin_link = dbase.get_long_link(short_link=short_link)
         if origin_link:
             return redirect(origin_link)
+
         else:
             return render_template('bad_link.html')
 

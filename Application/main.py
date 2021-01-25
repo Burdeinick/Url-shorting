@@ -66,14 +66,13 @@ def index():
     return render_template('index.html', form=input_link)
 
 
-@app.route("/new_line/<short_link>")
+@app.route("/line/<short_link>")
 def short_link_redirect(short_link):
     """The function for redirect a link to origin url."""
     try:
-        origin_link = dbase.get_long_link(short_link="new_line/" + short_link)
+        origin_link = dbase.get_long_link(short_link="line/" + short_link)
         if origin_link:
             return redirect(origin_link)
-
         else:
             return render_template('bad_link.html')
 

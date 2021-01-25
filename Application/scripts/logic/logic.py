@@ -7,6 +7,7 @@ from config import URL_REG
 import string
 import random
 from logger.log import MyLogging
+from tldextract import extract
 
 
 super_logger = MyLogging().setup_logger('logic',
@@ -33,20 +34,23 @@ class HandlerLink:
     def generate_short_link(self, *_, **kwargs) -> str:
         """The method for change a long link."""
         link_from_form = kwargs.get('link_from_form')
-        new_link = link_from_form.split('/')
-
         short_link = "".join(random.choice(string.ascii_lowercase + string.digits) for x in
                              range(random.randrange(5, 8)))
 
-        try:
-            if new_link:
-                dns = link_from_form.split('/')[2] + '_'
-                short_link = 'new_line/' + dns + short_link
-
-            else:
-                short_link = 'new_line/' + short_link
-
-        except IndexError as e:
-                super_logger.error(f'Error {str(e)} in generate_short_link(file - logic.py)', exc_info=True)
+        dns = self.get_domain(url=link_from_form)
+        if dns:
+            short_link = 'line/' + dns + short_link
+        else:
+            short_link = 'line/' + short_link
 
         return short_link
+
+    def get_domain(self, *_, **kwargs):
+        """The method can take domen name from url."""
+        url = kwargs.get('url')
+        subdomain, domain, suffix = extract(url)
+        ignored = ["www", "web", "ru"]
+        if not subdomain or subdomain.lower() in ignored:
+            return domain
+        pat = r"^(?:{})\.".format("|".join(ignored))
+        return re.sub(pat, "", subdomain)
